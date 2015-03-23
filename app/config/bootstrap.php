@@ -5,9 +5,6 @@ $root = dirname(dirname(__DIR__));
 $config = array(
     /* Required */
 
-    // The directory where PEAR is located
-    'pear_path'      => '/usr/share/pear',
-
     // The directories where the tests reside
     'test_directories' => array(
         "{$root}/app/test"
@@ -74,14 +71,7 @@ $config = array(
     )
 );
 
-set_include_path(
-    get_include_path()
-    . PATH_SEPARATOR . $root
-    . PATH_SEPARATOR . $config['pear_path']
-);
-
-require_once 'PHPUnit/Autoload.php';
-require_once 'PHPUnit/Util/Log/JSON.php';
+require_once $root . '/vendor/autoload.php';
 
 spl_autoload_register(function($class) use ($root) {
     $class = str_replace('\\', '/', $class);
