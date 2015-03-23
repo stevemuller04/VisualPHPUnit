@@ -427,18 +427,20 @@ class VPU {
             }
         }
 
+        $output_stream = fopen('php://memory', 'r+b');
         $result = new \PHPUnit_Framework_TestResult();
-        $result->addListener(new \PHPUnit_Util_Log_JSON());
+        $result->addListener(new \PHPUnit_Util_Log_JSON($output_stream));
 
         // We need to temporarily turn off html_errors to ensure correct
         // parsing of test debug output
         $html_errors = ini_get('html_errors');
         ini_set('html_errors', 0);
 
-        ob_start();
         $suite->run($result);
-        $results = ob_get_contents();
-        ob_end_clean();
+
+        fseek($output_stream, 0);
+        $results = stream_get_contents($output_stream);
+        fclose($output_stream);
 
         ini_set('html_errors', $html_errors);
         return $results;
